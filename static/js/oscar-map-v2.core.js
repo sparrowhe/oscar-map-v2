@@ -23,7 +23,7 @@ function checkDumpCallsign(callsign) {
 
 function updMap() {
     $.ajax({
-        url: "https://fly.xnatc.ink/data.php",
+        url: "https://map.xnatc.ink/data.php",
         success: function (data) {
             let n = data.split("\n");
             n.pop();
@@ -39,6 +39,8 @@ function updMap() {
                 }
                 if (!flag) {
                     map.removeLayer(d.marker);
+                    map.removeLayer(d.circle);
+                    $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
                     player.splice(i, 1);
                     i--;
                 }
@@ -65,6 +67,7 @@ function updMap() {
                 d.squawk = t[14];
                 d.actype = t[15];
                 checkDumpCallsign(d.callsign) == -1 ? d.marker = null : d.marker = player[checkDumpCallsign(d.callsign)].marker;
+                checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
             }
@@ -90,10 +93,18 @@ function addMark() {
                 let marker = L.marker([d.lat, d.lng], {
                     icon: icon
                 }).addTo(map);
+                let circle = L.circle([d.lat, d.lng], {
+                    color: '#ff0000',
+                    fillColor: '#ff0000',
+                    fillOpacity: 0.3,
+                    radius: d.radarRange
+                }).addTo(map);
                 // set pop up
+                circle.bindPopup(`<b>${d.callsign}</b>`);
                 marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
                 $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign}><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
+                player[i].circle = circle;
             } else if (d.type == "PILOT") {
                 let icon = L.icon({
                     iconUrl: 'static/image/airplane.png',
