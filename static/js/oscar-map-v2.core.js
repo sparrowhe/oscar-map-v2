@@ -11,7 +11,7 @@ function init() {
         accessToken: 'your.mapbox.public.access.token'
     }).addTo(map);
     updMap();
-    //setInterval(updMap, 1000);
+    setInterval(updMap, 1000);
 }
 
 function checkDumpCallsign(callsign) {
@@ -94,6 +94,7 @@ function addMark() {
                 }).addTo(map);
                 // set pop up
                 marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign}><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
             } else if (d.type == "PILOT") {
                 let icon = L.icon({
@@ -108,14 +109,17 @@ function addMark() {
                 }).addTo(map);
                 // set pop up
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign}><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
                 player[i].marker = marker;
             }
         } else {
             d.marker.setLatLng([d.lat, d.lng]);
             if (d.type == "ATC") {
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
             }
         }
     }
