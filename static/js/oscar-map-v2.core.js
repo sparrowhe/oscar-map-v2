@@ -7,8 +7,6 @@ function init() {
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a>, <a>鲁ICP备2021029425号</a>',
         maxZoom: 18,
-        id: 'your.mapbox.project.id',
-        accessToken: 'your.mapbox.public.access.token'
     }).addTo(map);
     updMap();
     setInterval(updMap, 1000);
