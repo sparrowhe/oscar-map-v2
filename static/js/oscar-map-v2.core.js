@@ -12,6 +12,10 @@ function init() {
     setInterval(updMap, 1000);
 }
 
+function milesToMetar(miles) {
+    return miles * 1.609344;
+}
+
 function checkDumpCallsign(callsign) {
     for (let j = 0; j < player.length; j++) {
         if (player[j].callsign == callsign) {
@@ -62,7 +66,7 @@ function updMap() {
                 d.dep = t[9];
                 d.arr = t[10];
                 d.route = t[11];
-                d.radarRange = parseFloat(t[12]);
+                d.radarRange = milesToMetar(parseFloat(t[12]));
                 d.form = t[13];
                 d.squawk = t[14];
                 d.actype = t[15];
