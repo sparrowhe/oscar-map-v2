@@ -1,0 +1,80 @@
+<html>
+    <head>
+        <title>XNATC 连飞地图</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="static/css/mdui.min.css" />
+        <link rel="stylesheet" href="static/css/leaflet.css">
+        <link rel="stylesheet" href="static/css/ocsar-map-v2.core.css">
+        <script src="static/js/jquery-3.6.0.min.js"></script>
+        <script src="static/js/mdui.min.js"></script>
+        <script src="static/js/leaflet.js"></script>
+        <script src="static/js/oscar-map-v2.core.js"></script>
+    </head>
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar" onload="init()">
+        <div class="mdui-appbar mdui-appbar-fixed">
+            <div class="mdui-toolbar mdui-color-theme">
+              <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">menu</i>
+              </a>
+              <a href="javascript:;" class="mdui-typo-headline">XNATC</a>
+              <div class="mdui-toolbar-spacer"></div>
+              <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">search</i>
+              </a>
+              <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">refresh</i>
+              </a>
+              <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">more_vert</i>
+              </a>
+            </div>
+        </div>
+        <div class="mdui-drawer mdui-drawer-open" style="width: 20%;">
+            <div style="margin-top: 10px;">
+                <div class="mdui-tab mdui-tab-centered mdui-tab-full-width" mdui-tab>
+                    <a href="#pilot" class="mdui-ripple"><p onclick="pilot()">飞行员</p></a>
+                    <a href="#atc" class="mdui-ripple"><p onclick="atc()">管制员</p></a>
+                </div>
+                <div id="pilot" class="mdui-p-a-2">
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table">
+                          <thead>
+                            <tr>
+                              <th>呼号</th>
+                              <th>起飞</th>
+                              <th>降落</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>CFI0225</td>
+                              <td>ZBAA</td>
+                              <td>ZSPD</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="atc" class="mdui-p-a-2">
+                    <div class="mdui-table-fluid">
+                        <table class="mdui-table">
+                          <thead>
+                            <tr>
+                              <th>名称</th>
+                              <th>席位</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>ATC0225</td>
+                              <td>ZBAA_TWR</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="map"></div>
+    </body>
+</html>
