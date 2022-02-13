@@ -12,6 +12,20 @@ function init() {
     setInterval(updMap, 1000);
 }
 
+function searchCallsignInPlayerAndSelect() {
+    let callsign = $("#callsign-search").val();
+    for (let i = 0; i < player.length; i++) {
+        if (player[i].callsign == callsign) {
+            let latlng = [player[i].lat, player[i].lng];
+            map.setView(latlng, 10);
+            if (player[i].marker) {
+                player[i].marker.openPopup();
+            }
+            break;
+        }
+    }
+}
+
 function milesToMetar(miles) {
     return miles * 1.609344;
 }
@@ -93,6 +107,7 @@ function updMap() {
                     $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
                     player.splice(i, 1);
                     i--;
+                    mdui.updateTables();
                 }
             }
             for (let i = 0; i < n.length; i++) {
@@ -198,4 +213,5 @@ function addMark() {
             }
         }
     }
+    mdui.updateTables();
 }
