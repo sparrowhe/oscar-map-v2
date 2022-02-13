@@ -22,7 +22,7 @@
               <a href="javascript:updMap();" class="mdui-btn mdui-btn-icon mdui-ripple">
                 <i class="mdui-icon material-icons">refresh</i>
               </a>
-              <a href="javascript:;" class="mdui-btn mdui-btn-icon" disabled>
+              <a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple" mdui-dialog="{target: '#settingDialog'}">
                 <i class="mdui-icon material-icons">more_vert</i>
               </a>
             </div>
@@ -63,6 +63,34 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="mdui-dialog" id="settingDialog">
+          <div class="mdui-dialog-title">设置</div>
+          <div class="mdui-dialog-content">
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="show-pilot" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>显示飞行员</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="show-atc" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>显示管制员</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="show-range" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>显示管制范围</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="show-obs" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>显示非正式席位</span>
+            </label>
+          </div>
+          <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>OK</button>
+          </div>
         </div>
         <div id="map"></div>
     </body>

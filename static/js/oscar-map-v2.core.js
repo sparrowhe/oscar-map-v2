@@ -16,6 +16,42 @@ function milesToMetar(miles) {
     return miles * 1.609344;
 }
 
+function checkShowPilot() {
+    let obj = $("#show-pilot");
+    if (obj.prop("checked")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkShowATC() {
+    let obj = $("#show-atc");
+    if (obj.prop("checked")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkShowRange() {
+    let obj = $("#show-range");
+    if (obj.prop("checked")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkShowObs() {
+    let obj = $("#show-obs");
+    if (obj.prop("checked")) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 function checkDumpCallsign(callsign) {
     for (let j = 0; j < player.length; j++) {
         if (player[j].callsign == callsign) {
@@ -23,6 +59,16 @@ function checkDumpCallsign(callsign) {
         }
     }
     return -1;
+}
+
+function clickPlayerInList(obj) {
+    let callsign = $(obj).attr("id");
+    let d = player[checkDumpCallsign(callsign)];
+    let latlng = [d.lat, d.lng];
+    map.setView(latlng, 10);
+    if (d.marker) {
+        d.marker.openPopup();
+    }
 }
 
 function updMap() {
@@ -96,17 +142,24 @@ function addMark() {
                 });
                 let marker = L.marker([d.lat, d.lng], {
                     icon: icon
-                }).addTo(map);
+                });
                 let circle = L.circle([d.lat, d.lng], {
                     color: '#ff0000',
                     fillColor: '#ff0000',
                     fillOpacity: 0.3,
                     radius: d.radarRange
-                }).addTo(map);
+                })
+                if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
+                    checkShowATC() ? marker.addTo(map) : null;
+                    checkShowRange() ? circle.addTo(map) : null;
+                } else {
+                    checkShowObs() ? marker.addTo(map) : null;
+                    checkShowRange() ? circle.addTo(map) : null;
+                }
                 // set pop up
                 circle.bindPopup(`<b>${d.callsign}</b>`);
                 marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
-                $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign}><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
+                $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
                 player[i].circle = circle;
             } else if (d.type == "PILOT") {
@@ -119,18 +172,27 @@ function addMark() {
                 let marker = L.marker([d.lat, d.lng], {
                     icon: icon,
                     rotationAngle: d.heading
-                }).addTo(map);
+                });
+                checkShowPilot() ? marker.addTo(map) : null;
                 // set pop up
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
-                $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign}><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
+                $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
                 player[i].marker = marker;
             }
         } else {
             d.marker.setLatLng([d.lat, d.lng]);
             if (d.type == "ATC") {
+                if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
+                    !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
+                    !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
+                } else {
+                    !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
+                    !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
+                }
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
+                !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
             }
