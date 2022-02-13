@@ -10,6 +10,8 @@ function init() {
     }).addTo(map);
     updMap();
     setInterval(updMap, 1000);
+    setUTCTime();
+    setInterval(setUTCTime, 1000);
 }
 
 function searchCallsignInPlayerAndSelect() {
@@ -28,6 +30,12 @@ function searchCallsignInPlayerAndSelect() {
 
 function milesToMetar(miles) {
     return miles * 1.609344;
+}
+
+function setUTCTime() {
+    let d = new Date();
+    let utc = d.toUTCString().split(" ")[4].split(":");
+    $("#time").text(`${utc[0]}:${utc[1]}:${utc[2]} UTC`);
 }
 
 function checkShowPilot() {
