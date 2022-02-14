@@ -10,7 +10,7 @@ function init() {
             maxZoom: 18,
         }).addTo(map);
     } else if (localStorage.getItem("map") == "google") {
-        L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+        L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&x={x}&y={y}&z={z}', {
             attribution: 'Map data © <a href="https://map.google.cn">Google</a>, <a>鲁ICP备2021029425号</a>',
             maxZoom: 18,
         }).addTo(map);
