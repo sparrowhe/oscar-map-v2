@@ -158,8 +158,8 @@ function updMap() {
                     }
                 }
                 if (!flag) {
-                    map.removeLayer(d.marker);
-                    map.removeLayer(d.circle);
+                    if (d.marker) map.removeLayer(d.marker);
+                    if (d.circle) map.removeLayer(d.circle);
                     $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
                     player.splice(i, 1);
                     i--;
@@ -261,10 +261,12 @@ function addMark() {
                     !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
                 }
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                player[i].marker.options.rotationAngle = d.heading;
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
-                d.marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                d.marker.options.rotationAngle = d.heading;
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
             }
         }
