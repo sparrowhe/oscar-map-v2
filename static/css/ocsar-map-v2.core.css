@@ -15,7 +15,7 @@
 .time {
     z-index: 114514;
     position: fixed;
-    margin-top: 20px;
+    margin-top: 0px;
     font-size: 25px;
     font-weight: bold;
     width: 180px;
