@@ -4,10 +4,32 @@ let player = [];
 
 function init() {
     map = L.map('map').setView([34, 110], 5);
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a>, <a>鲁ICP备2021029425号</a>',
-        maxZoom: 18,
-    }).addTo(map);
+    if (localStorage.getItem("map") == null || localStorage.getItem("map") == "osm") {
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>, <a>鲁ICP备2021029425号</a>',
+            maxZoom: 18,
+        }).addTo(map);
+    } else if (localStorage.getItem("map") == "google") {
+        L.tileLayer('https://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}', {
+            attribution: 'Map data © <a href="https://map.google.cn">Google</a>, <a>鲁ICP备2021029425号</a>',
+            maxZoom: 18,
+        }).addTo(map);
+    }
+    if (localStorage.getItem("show-pilot") == "false") {
+        $("#show-pilot").prop("checked", false);
+    }
+    if (localStorage.getItem("show-atc") == "false") {
+        $("#show-atc").prop("checked", false);
+    }
+    if (localStorage.getItem("show-range") == "false") {
+        $("#show-range").prop("checked", false);
+    }
+    if (localStorage.getItem("show-obs") == "false") {
+        $("#show-obs").prop("checked", false);
+    }
+    if (localStorage.getItem("map") == "google") {
+        $("#google").prop("checked", true);
+    }
     updMap();
     setInterval(updMap, 1000);
     setUTCTime();
@@ -41,8 +63,10 @@ function setUTCTime() {
 function checkShowPilot() {
     let obj = $("#show-pilot");
     if (obj.prop("checked")) {
+        localStorage.setItem("show-pilot", "true");
         return true;
     } else {
+        localStorage.setItem("show-pilot", "false");
         return false;
     }
 }
@@ -50,8 +74,10 @@ function checkShowPilot() {
 function checkShowATC() {
     let obj = $("#show-atc");
     if (obj.prop("checked")) {
+        localStorage.setItem("show-atc", "true");
         return true;
     } else {
+        localStorage.setItem("show-atc", "false");
         return false;
     }
 }
@@ -59,8 +85,10 @@ function checkShowATC() {
 function checkShowRange() {
     let obj = $("#show-range");
     if (obj.prop("checked")) {
+        localStorage.setItem("show-range", "true");
         return true;
     } else {
+        localStorage.setItem("show-range", "false");
         return false;
     }
 }
@@ -68,8 +96,10 @@ function checkShowRange() {
 function checkShowObs() {
     let obj = $("#show-obs");
     if (obj.prop("checked")) {
+        localStorage.setItem("show-obs", "true");
         return true;
     } else {
+        localStorage.setItem("show-obs", "false");
         return false;
     }
 }
@@ -91,6 +121,24 @@ function clickPlayerInList(obj) {
     if (d.marker) {
         d.marker.openPopup();
     }
+}
+
+function checkMapSeleted() {
+    let obj = $("input[name='map-select']:checked");
+    if (obj.length == 0) {
+        return "";
+    } else {
+        localStorage.setItem("map", obj.attr("id"));
+        return obj.attr("id");
+    }
+}
+
+function clickSettingSave() {
+    checkShowATC();
+    checkShowObs();
+    checkShowPilot();
+    checkShowRange();
+    checkMapSeleted();
 }
 
 function updMap() {

@@ -87,9 +87,23 @@
               <i class="mdui-checkbox-icon"></i>
               <span>显示非正式席位</span>
             </label>
+            <br>
+            <span>地图选择：</span>
+            <label class="mdui-radio">
+              <input type="radio" name="map-select" checked id="osm" />
+              <i class="mdui-radio-icon"></i>
+              OpenStreetMap
+            </label>
+          
+            <label class="mdui-radio">
+              <input type="radio" name="map-select" id="google" />
+              <i class="mdui-radio-icon"></i>
+              Google 卫星
+            </label>
+            <small>本设置刷新有效</small>
           </div>
           <div class="mdui-dialog-actions">
-            <button class="mdui-btn mdui-ripple" mdui-dialog-confirm>OK</button>
+            <button class="mdui-btn mdui-ripple" onclick="clickSettingSave()" mdui-dialog-confirm>OK</button>
           </div>
         </div>
         <div class="mdui-dialog" id="searchDialog">
