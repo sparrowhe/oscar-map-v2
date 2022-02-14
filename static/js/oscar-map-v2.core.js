@@ -21,7 +21,7 @@ function init() {
             url: "static/config.json",
             dataType: "json",
             success: function (data) {
-                L.tileLayer(`https://t0.tianditu.gov.cn/vec_c/wmts?layer=vec&style=default&tilematrixset=c&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${data.token.tianditu}`, {
+                L.tileLayer(`https://t0.tianditu.gov.cn/img_c/wmts?layer=img&style=default&tilematrixset=c&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${data.token.tianditu}`, {
                     maxZoom: 18,
                     zoomOffset: 1,
                     tileSize: 256,
@@ -60,7 +60,7 @@ function searchCallsignInPlayerAndSelect() {
     for (let i = 0; i < player.length; i++) {
         if (player[i].callsign == callsign) {
             let latlng = [player[i].lat, player[i].lng];
-            map.setView(latlng, 10);
+            map.setView(latlng, 8);
             if (player[i].marker) {
                 player[i].marker.openPopup();
             }
@@ -136,7 +136,7 @@ function clickPlayerInList(obj) {
     let callsign = $(obj).attr("id");
     let d = player[checkDumpCallsign(callsign)];
     let latlng = [d.lat, d.lng];
-    map.setView(latlng, 10);
+    map.setView(latlng, 8);
     if (d.marker) {
         d.marker.openPopup();
     }
@@ -226,8 +226,8 @@ function addMark() {
                 // set icon to ATC and add marker
                 let icon = L.icon({
                     iconUrl: 'static/image/headset_mic.png',
-                    iconSize: [20, 20],
-                    iconAnchor: [10, 10],
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25],
                     popupAnchor: [0, -15]
                 });
                 let marker = L.marker([d.lat, d.lng], {
@@ -255,8 +255,8 @@ function addMark() {
             } else if (d.type == "PILOT") {
                 let icon = L.icon({
                     iconUrl: 'static/image/airplane.png',
-                    iconSize: [20, 20],
-                    iconAnchor: [10, 10],
+                    iconSize: [50, 50],
+                    iconAnchor: [25, 25],
                     popupAnchor: [0, -15]
                 });
                 let marker = L.marker([d.lat, d.lng], {
