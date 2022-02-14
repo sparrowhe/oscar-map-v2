@@ -49,6 +49,19 @@ function init() {
     if (localStorage.getItem("map") == "tianditu") {
         $("#tianditu").prop("checked", true);
     }
+    // load tag setting
+    if (localStorage.getItem("tag-callsign") == "true") {
+        $("#tag-callsign").prop("checked", true);
+    }
+    if (localStorage.getItem("tag-leg") == "true") {
+        $("#tag-leg").prop("checked", true);
+    }
+    if (localStorage.getItem("tag-alt") == "true") {
+        $("#tag-alt").prop("checked", true);
+    }
+    if (localStorage.getItem("tag-type") == "true") {
+        $("#tag-type").prop("checked", true);
+    }
     updMap();
     setInterval(updMap, 1000);
     setUTCTime();
@@ -152,12 +165,40 @@ function checkMapSeleted() {
     }
 }
 
+function saveTagSetting() {
+    let callsign = $("input[id='tag-callsign']:checked");
+    if (callsign.length == 0) {
+        localStorage.setItem("tag-callsign", "false");
+    } else {
+        localStorage.setItem("tag-callsign", "true");
+    }
+    let leg = $("input[id='tag-leg']:checked");
+    if (leg.length == 0) {
+        localStorage.setItem("tag-leg", "false");
+    } else {
+        localStorage.setItem("tag-leg", "true");
+    }
+    let alt = $("input[id='tag-alt']:checked");
+    if (alt.length == 0) {
+        localStorage.setItem("tag-alt", "false");
+    } else {
+        localStorage.setItem("tag-alt", "true");
+    }
+    let type = $("input[id='tag-type']:checked");
+    if (type.length == 0) {
+        localStorage.setItem("tag-type", "false");
+    } else {
+        localStorage.setItem("tag-type", "true");
+    }
+}
+
 function clickSettingSave() {
     checkShowATC();
     checkShowObs();
     checkShowPilot();
     checkShowRange();
     checkMapSeleted();
+    saveTagSetting();
 }
 
 function updMap() {
@@ -208,6 +249,7 @@ function updMap() {
                 d.actype = t[15];
                 checkDumpCallsign(d.callsign) == -1 ? d.marker = null : d.marker = player[checkDumpCallsign(d.callsign)].marker;
                 checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
+                checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.circle = player[checkDumpCallsign(d.callsign)].tooltip;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
             }
@@ -263,6 +305,28 @@ function addMark() {
                     icon: icon,
                     rotationAngle: d.heading
                 });
+                player[i].tooltip = "";
+                if (localStorage.getItem("tag-callsign") == "true"){
+                    player[i].tooltip += `<b>${d.callsign}</b><br>`;
+                }
+                if (localStorage.getItem("tag-leg") == "true") {
+                    player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                }
+                if (localStorage.getItem("tag-alt") == "true") {
+                    player[i].tooltip += `${d.alt} ft<br>`;
+                }
+                if (localStorage.getItem("tag-type") == "true") {
+                    player[i].tooltip += `${d.actype}<br>`;
+                }
+                if (player[i].tooltip != "") {
+                    marker.bindTooltip(player[i].tooltip, {
+                        permanent: true,
+                        className: "tag",
+                        direction: "right",
+                        offset: [15, 0],
+                        opacity: 0.8
+                    }).openTooltip();
+                }
                 checkShowPilot() ? marker.addTo(map) : null;
                 // set pop up
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
@@ -283,6 +347,29 @@ function addMark() {
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
+                player[i].tooltip = "";
+                d.marker.closeTooltip();
+                if (localStorage.getItem("tag-callsign") == "true"){
+                    player[i].tooltip += `<b>${d.callsign}</b><br>`;
+                }
+                if (localStorage.getItem("tag-leg") == "true") {
+                    player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                }
+                if (localStorage.getItem("tag-alt") == "true") {
+                    player[i].tooltip += `${d.alt} ft<br>`;
+                }
+                if (localStorage.getItem("tag-type") == "true") {
+                    player[i].tooltip += `${d.actype}<br>`;
+                }
+                if (player[i].tooltip != "") {
+                    d.marker.bindTooltip(`<small>${player[i].tooltip}</small>`, {
+                        permanent: true,
+                        className: "tag",
+                        direction: "right",
+                        offset: [15, 0],
+                        opacity: 0.8
+                    }).openTooltip();
+                }
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
                 d.marker.options.rotationAngle = d.heading;
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);

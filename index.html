@@ -11,7 +11,7 @@
         <script src="static/js/leaflet.rotatedMarker.js"></script>
         <script src="static/js/oscar-map-v2.core.js"></script>
     </head>
-    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar" onload="init()">
+    <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-blue-grey" onload="init()">
         <div class="mdui-appbar mdui-appbar-fixed">
             <div class="mdui-toolbar mdui-color-theme">
               <a href="javascript:;" class="mdui-typo-headline">XNATC 连飞地图</a>
@@ -108,6 +108,28 @@
               天地图
             </label>
             <small>本设置刷新有效</small>
+            <br>
+            <span>标牌设置：</span>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="tag-callsign"/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>呼号</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="tag-leg"/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>航段</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="tag-alt"/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>高度</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="tag-type"/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>机型</span>
+            </label>
           </div>
           <div class="mdui-dialog-actions">
             <button class="mdui-btn mdui-ripple" onclick="clickSettingSave()" mdui-dialog-confirm>OK</button>

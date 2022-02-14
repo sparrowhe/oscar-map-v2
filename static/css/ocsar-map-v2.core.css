@@ -11,6 +11,16 @@
     padding-left:  450px;
 }
 
+.tag {
+    padding: 3px;
+    background-color: #ffffff;
+    border: 0px solid #fff;
+    border-radius: 3px;
+}
+
+.tag::before {
+    visibility: hidden;
+}
 
 .time {
     z-index: 114514;
