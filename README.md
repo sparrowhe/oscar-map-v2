@@ -10,7 +10,7 @@
 如果您对以上条目感到不适，建议您停止使用本项目。  
 
 # 安装教程
-将本项目放到网站目录下，阅读 `data.php` 源码自行修改必要参数。  
+将本项目放到网站目录下，将 `static/config.example.json` 重命名为 `config.json`，写入自己的天地图apikey，阅读 `data.php` 源码自行修改必要参数。  
 航向显示需要修改 `fsd` 源码，可自行探索。
 
 有关源码 [fsd/fsd.cpp#L165](https://github.com/kuroneko/fsd/blob/master/fsd/fsd.cpp#L165)

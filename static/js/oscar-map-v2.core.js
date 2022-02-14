@@ -14,6 +14,22 @@ function init() {
             attribution: 'Map data © <a href="https://map.google.cn">Google</a>, <a>鲁ICP备2021029425号</a>',
             maxZoom: 18,
         }).addTo(map);
+    } else if (localStorage.getItem("map") == "tianditu") {
+        map.options.crs = L.CRS.EPSG4326;
+        map.setView([34, 110], 5);
+        $.ajax({
+            url: "static/config.json",
+            dataType: "json",
+            success: function (data) {
+                L.tileLayer(`https://t0.tianditu.gov.cn/vec_c/wmts?layer=vec&style=default&tilematrixset=c&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${data.token.tianditu}`, {
+                    maxZoom: 18,
+                    zoomOffset: 1,
+                    tileSize: 256,
+                    attribution: 'Map data © <a href="https://www.tianditu.gov.cn">天地图</a>, <a>鲁ICP备2021029425号</a>',
+                }).addTo(map);
+                
+            }
+        })
     }
     if (localStorage.getItem("show-pilot") == "false") {
         $("#show-pilot").prop("checked", false);
@@ -29,6 +45,9 @@ function init() {
     }
     if (localStorage.getItem("map") == "google") {
         $("#google").prop("checked", true);
+    }
+    if (localStorage.getItem("map") == "tianditu") {
+        $("#tianditu").prop("checked", true);
     }
     updMap();
     setInterval(updMap, 1000);
@@ -261,7 +280,6 @@ function addMark() {
                     !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
                 }
                 d.marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
-                player[i].marker.options.rotationAngle = d.heading;
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
