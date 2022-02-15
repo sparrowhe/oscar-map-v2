@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'Consolas';
+    src: url(../fonts/consolas/consola.ttf);
+}
+
 #map {
     height: 100%;
 }
@@ -12,6 +17,7 @@
 }
 
 .tag {
+    font-family: 'Consolas';
     padding: 3px;
     background-color: #ffffff;
     border: 0px solid #fff;

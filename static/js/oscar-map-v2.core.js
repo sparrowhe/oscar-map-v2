@@ -207,6 +207,7 @@ function updMap() {
         success: function (data) {
             let n = data.split("\n");
             n.pop();
+            if (n[0] == "::::::::0::::0:XNATC::" && player.length == 0) return;
             for (let i = 0; i < player.length; i++) {
                 let d = player[i];
                 let flag = false;
@@ -218,8 +219,8 @@ function updMap() {
                     }
                 }
                 if (!flag) {
-                    if (d.marker) map.removeLayer(d.marker);
-                    if (d.circle) map.removeLayer(d.circle);
+                    if (d.marker != null) map.removeLayer(d.marker);
+                    if (d.circle != null) map.removeLayer(d.circle);
                     $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
                     player.splice(i, 1);
                     i--;
@@ -247,9 +248,13 @@ function updMap() {
                 d.form = t[13];
                 d.squawk = t[14];
                 d.actype = t[15];
+                d.circle = null;
+                d.marker = null;
+                if (d.lat == NaN || d.lng == NaN) continue;
+                if (d.callsign == NaN) continue;
                 checkDumpCallsign(d.callsign) == -1 ? d.marker = null : d.marker = player[checkDumpCallsign(d.callsign)].marker;
                 checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
-                checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.circle = player[checkDumpCallsign(d.callsign)].tooltip;
+                checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.tooltip = player[checkDumpCallsign(d.callsign)].tooltip;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
             }
@@ -310,13 +315,17 @@ function addMark() {
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
                 }
                 if (localStorage.getItem("tag-leg") == "true") {
-                    player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                    if (d.dep != "" && d.arr != "") {
+                        player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                    }
                 }
                 if (localStorage.getItem("tag-alt") == "true") {
                     player[i].tooltip += `${d.alt} ft<br>`;
                 }
                 if (localStorage.getItem("tag-type") == "true") {
-                    player[i].tooltip += `${d.actype}<br>`;
+                    if (d.actype != "") {
+                        player[i].tooltip += `${d.actype}<br>`;
+                    }
                 }
                 if (player[i].tooltip != "") {
                     marker.bindTooltip(player[i].tooltip, {
@@ -353,13 +362,17 @@ function addMark() {
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
                 }
                 if (localStorage.getItem("tag-leg") == "true") {
-                    player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                    if (d.dep != "" && d.arr != "") {
+                        player[i].tooltip += `${d.dep} - ${d.arr}<br>`;
+                    }
                 }
                 if (localStorage.getItem("tag-alt") == "true") {
                     player[i].tooltip += `${d.alt} ft<br>`;
                 }
                 if (localStorage.getItem("tag-type") == "true") {
-                    player[i].tooltip += `${d.actype}<br>`;
+                    if (d.actype != "") {
+                        player[i].tooltip += `${d.actype}<br>`;
+                    }
                 }
                 if (player[i].tooltip != "") {
                     d.marker.bindTooltip(`<small>${player[i].tooltip}</small>`, {
