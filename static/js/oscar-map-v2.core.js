@@ -327,6 +327,13 @@ function addPath(callsign) {
                         opacity: 1,
                         smoothFactor: 1
                     }).addTo(player[checkDumpCallsign(callsign)].polyline);
+                    let featureGroup = player[checkDumpCallsign(callsign)].polyline;
+                    // only stay last 100 features in this group
+                    featureGroup.eachLayer(function (layer) {
+                        if (featureGroup.getLayers().length > 5) {
+                            featureGroup.removeLayer(layer);
+                        }
+                    });
                 }
             }
         }
