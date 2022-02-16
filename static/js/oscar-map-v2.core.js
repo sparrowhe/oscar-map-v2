@@ -3,6 +3,9 @@ mdui.mutation();
 let player = [];
 
 function init() {
+    console.log('%cOscar Map', 'color: black; font-size: 24px; font-weight: bold;');
+    console.log('%c版权所有：Sparrow He', 'color: black; font-size: 15px;');
+    console.log('%c禁止一切侵权行为，购买使用授权请联系QQ：1441373096', 'color: black; font-size: 15px;');
     map = L.map('map').setView([34, 110], 5);
     if (localStorage.getItem("map") == null || localStorage.getItem("map") == "osm") {
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
