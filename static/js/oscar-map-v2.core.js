@@ -77,9 +77,9 @@ function init() {
         }
     });
     updMap();
-    setInterval(updMap, 1000);
+    setInterval(updMap, 5000);
     setUTCTime();
-    setInterval(setUTCTime, 1000);
+    setInterval(setUTCTime, 5000);
 }
 
 function searchCallsignInPlayerAndSelect() {
@@ -330,7 +330,7 @@ function addPath(callsign) {
                     let featureGroup = player[checkDumpCallsign(callsign)].polyline;
                     // only stay last 100 features in this group
                     featureGroup.eachLayer(function (layer) {
-                        if (featureGroup.getLayers().length > 5) {
+                        if (featureGroup.getLayers().length > 55 {
                             featureGroup.removeLayer(layer);
                         }
                     });
