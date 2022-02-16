@@ -330,7 +330,7 @@ function addPath(callsign) {
                     let featureGroup = player[checkDumpCallsign(callsign)].polyline;
                     // only stay last 100 features in this group
                     featureGroup.eachLayer(function (layer) {
-                        if (featureGroup.getLayers().length > 55 {
+                        if (featureGroup.getLayers().length > 5){
                             featureGroup.removeLayer(layer);
                         }
                     });
