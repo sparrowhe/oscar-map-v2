@@ -75,11 +75,6 @@ function init() {
     map.on('popupopen', function(e) {
         let marker = e.popup._source;
         let callsign = marker.options.alt;
-        if (openCallsign != "") {
-            map.removeLayer(player[checkDumpCallsign(openCallsign)].polyline);
-            map.removeLayer(player[checkDumpCallsign(openCallsign)].plan);
-            map.removeLayer(player[checkDumpCallsign(openCallsign)].planMarkerList);
-        }
         if (marker.options.alt != undefined) {
             player[checkDumpCallsign(callsign)].polyline.addTo(map);
             player[checkDumpCallsign(callsign)].plan.addTo(map);
