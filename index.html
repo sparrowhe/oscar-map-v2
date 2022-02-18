@@ -38,8 +38,9 @@
         <div class="mdui-drawer" style="width: 450px;">
             <div style="margin-top: 10px;">
                 <div class="mdui-tab mdui-tab-centered mdui-tab-full-width" mdui-tab>
-                    <a href="#pilot" class="mdui-ripple"><p onclick="pilot()">飞行员</p></a>
-                    <a href="#atc" class="mdui-ripple"><p onclick="atc()">管制员</p></a>
+                    <a href="#pilot" class="mdui-ripple"><p>飞行员</p></a>
+                    <a href="#atc" class="mdui-ripple"><p>管制员</p></a>
+                    <a href="#detail-body" class="mdui-ripple"><p>详情</p></a>
                 </div>
                 <div id="pilot" class="mdui-p-a-2">
                     <div class="mdui-table-fluid">
@@ -69,6 +70,9 @@
                           </tbody>
                         </table>
                     </div>
+                </div>
+                <div id="detail-body" class="mdui-p-a-2">
+                  <p>请先选中一个机组或管制员</p>
                 </div>
             </div>
         </div>
@@ -134,6 +138,18 @@
               <input type="checkbox" id="tag-type"/>
               <i class="mdui-checkbox-icon"></i>
               <span>机型</span>
+            </label>
+            <br>
+            <span>机组设置：</span>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="pilot-track" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>航迹</span>
+            </label>
+            <label class="mdui-checkbox">
+              <input type="checkbox" id="pilot-plan" checked/>
+              <i class="mdui-checkbox-icon"></i>
+              <span>计划航路</span>
             </label>
           </div>
           <div class="mdui-dialog-actions">

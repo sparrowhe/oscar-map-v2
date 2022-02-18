@@ -1,6 +1,7 @@
 let map;
 mdui.mutation();
 let player = [];
+let openCallsign
 
 function init() {
     console.log('%cOscar Map', 'color: black; font-size: 24px; font-weight: bold;');
@@ -65,24 +66,44 @@ function init() {
     if (localStorage.getItem("tag-type") == "true") {
         $("#tag-type").prop("checked", true);
     }
+    if (localStorage.getItem("pilot-track") == "false") {
+        $("#pilot-track").prop("checked", false);
+    }
+    if (localStorage.getItem("pilot-track") == "false") {
+        $("#pilot-track").prop("checked", false);
+    }
     map.on('popupopen', function(e) {
         let marker = e.popup._source;
-        if (marker.options.alt != undefined) {
-            let callsign = marker.options.alt;
-            player[checkDumpCallsign(callsign)].polyline.addTo(map);
+        let callsign = marker.options.alt;
+        if (openCallsign != "") {
+            map.removeLayer(player[checkDumpCallsign(openCallsign)].polyline);
+            map.removeLayer(player[checkDumpCallsign(openCallsign)].plan);
+            map.removeLayer(player[checkDumpCallsign(openCallsign)].planMarkerList);
         }
+        if (marker.options.alt != undefined) {
+            player[checkDumpCallsign(callsign)].polyline.addTo(map);
+            player[checkDumpCallsign(callsign)].plan.addTo(map);
+            player[checkDumpCallsign(callsign)].planMarkerList.addTo(map);
+        }
+        let d = player[checkDumpCallsign(callsign)];
+        let detailDOM = $(`#detail-body`);
+        detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}</div>`);
     });
     map.on('popupclose', function(e) {
         let marker = e.popup._source;
+        let callsign = marker.options.alt;
         if (marker.options.alt != undefined) {
-            let callsign = marker.options.alt;
             map.removeLayer(player[checkDumpCallsign(callsign)].polyline);
+            map.removeLayer(player[checkDumpCallsign(callsign)].plan);
+            map.removeLayer(player[checkDumpCallsign(callsign)].planMarkerList);
         }
+        let detailDOM = $(`#detail-body`);
+        detailDOM.html("<p>请先选中一个机组或管制员</p>");
     });
     updMap();
     setInterval(updMap, 5000);
     setUTCTime();
-    setInterval(setUTCTime, 5000);
+    setInterval(setUTCTime, 1000);
 }
 
 function searchCallsignInPlayerAndSelect() {
@@ -182,6 +203,21 @@ function checkMapSeleted() {
     }
 }
 
+function savePilotSetting() {
+    let track = $("#pilot-track");
+    if (track.prop("checked")) {
+        localStorage.setItem("pilot-track", "true");
+    } else {
+        localStorage.setItem("pilot-track", "false");
+    }
+    let plan = $("#pilot-plan");
+    if (plan.prop("checked")) {
+        localStorage.setItem("pilot-plan", "true");
+    } else {
+        localStorage.setItem("pilot-plan", "false");
+    }
+}
+
 function saveTagSetting() {
     let callsign = $("input[id='tag-callsign']:checked");
     if (callsign.length == 0) {
@@ -216,6 +252,7 @@ function clickSettingSave() {
     checkShowRange();
     checkMapSeleted();
     saveTagSetting();
+    savePilotSetting();
 }
 
 function updMap() {
@@ -239,6 +276,7 @@ function updMap() {
                     if (d.marker != null) map.removeLayer(d.marker);
                     if (d.circle != null) map.removeLayer(d.circle);
                     if (d.polyline != undefined || d.polyline != null) map.removeLayer(d.polyline);
+                    if (d.plan != undefined || d.plan != null) map.removeLayer(d.plan);
                     $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
                     player.splice(i, 1);
                     i--;
@@ -274,6 +312,8 @@ function updMap() {
                 checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
                 checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.tooltip = player[checkDumpCallsign(d.callsign)].tooltip;
                 checkDumpCallsign(d.callsign) == -1 ? d.polyline = L.featureGroup() : d.polyline = player[checkDumpCallsign(d.callsign)].polyline;
+                checkDumpCallsign(d.callsign) == -1 ? d.plan = L.polyline([], { color: "grey", weight: 6 }) : d.plan = player[checkDumpCallsign(d.callsign)].plan;
+                checkDumpCallsign(d.callsign) == -1 ? d.planMarkerList = L.featureGroup() : d.planMarkerList = player[checkDumpCallsign(d.callsign)].planMarkerList;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
             }
@@ -290,53 +330,78 @@ function addPath(callsign) {
                 let d = data[i];
                 if (d.callsign == callsign) {
                     let route = d.route;
-                    let points = []
-                    for (let i = 0; i < route.length; i++) {
-                        points.push(L.latLng(route[i][0], route[i][1], route[i][2]));
-                    }
-                    let polyline = L.multiOptionsPolyline(points, {
-                        multiOptions: {
-                            optionIdxFn: function (latLng) {
-                                altThresholds = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000, 28000, 29000, 30000, 31000, 32000, 33000, 34000, 35000, 36000, 37000, 38000, 39000, 40000, 41000, 42000, 43000, 44000, 45000, 46000, 47000, 48000, 49000, 50000, 51000, 52000, 53000, 90000, 100000];
-                                for (let i = 0; i < altThresholds.length; ++i) {
-                                    if (latLng.alt <= altThresholds[i]) {
-                                        return i;
-                                    }
-                                }
-                                return altThresholds.length;
-                            },
-                            options: [{color: '#0046a9'}, {color: '#004cad'}, {color: '#0054b3'},
-                            {color: '#005ebb'}, {color: '#0068c3'}, {color: '#0072cb'},
-                            {color: '#007ed5'}, {color: '#008bdd'}, {color: '#0097e6'},
-                            {color: '#00a1ed'}, {color: '#01adf3'}, {color: '#01b7f9'},
-                            {color: '#00befd'}, {color: '#00c9ff'}, {color: '#00cfff'},
-                            {color: '#00d5ff'}, {color: '#00d9fb'}, {color: '#00dbed'},
-                            {color: '#01dbe3'}, {color: '#00dbd9'}, {color: '#00dbcb'},
-                            {color: '#00dbc1'}, {color: '#00dbb3'}, {color: '#01dba5'},
-                            {color: '#00db99'}, {color: '#00db8b'}, {color: '#00db7e'},
-                            {color: '#01db72'}, {color: '#00db68'}, {color: '#00db5e'},
-                            {color: '#06db56'}, {color: '#11dd4e'}, {color: '#20df46'},
-                            {color: '#30df40'}, {color: '#42e138'}, {color: '#56e330'},
-                            {color: '#6ae32a'}, {color: '#81e524'}, {color: '#95e51e'},
-                            {color: '#a9e518'}, {color: '#bde512'}, {color: '#cfe50e'},
-                            {color: '#dfe50a'}, {color: '#eee506'}, {color: '#f9e502'},
-                            {color: '#ffe300'}, {color: '#ffe000'}, {color: '#ffdb01'},
-                            {color: '#ffd900'}, {color: '#ffd500'}, {color: '#ffd100'},
-                            {color: '#ffcb00'}, {color: '#ffc700'}, {color: '#ffc300'},
-                            {color: '#757b85'}]
-                        },
-                        weight: 5,
-                        lineCap: 'round',
-                        opacity: 1,
-                        smoothFactor: 1
-                    }).addTo(player[checkDumpCallsign(callsign)].polyline);
-                    let featureGroup = player[checkDumpCallsign(callsign)].polyline;
-                    // only stay last 100 features in this group
-                    featureGroup.eachLayer(function (layer) {
-                        if (featureGroup.getLayers().length > 5){
-                            featureGroup.removeLayer(layer);
+                    let points = [];
+                    let plan = d.route_f;
+                    if (localStorage.getItem("pilot-track") == "true") {
+                        for (let i = 0; i < route.length; i++) {
+                            points.push(L.latLng(route[i][0], route[i][1], route[i][2]));
                         }
-                    });
+                        let polyline = L.multiOptionsPolyline(points, {
+                            multiOptions: {
+                                optionIdxFn: function (latLng) {
+                                    altThresholds = [1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 11000, 12000, 13000, 14000, 15000, 16000, 17000, 18000, 19000, 20000, 21000, 22000, 23000, 24000, 25000, 26000, 27000, 28000, 29000, 30000, 31000, 32000, 33000, 34000, 35000, 36000, 37000, 38000, 39000, 40000, 41000, 42000, 43000, 44000, 45000, 46000, 47000, 48000, 49000, 50000, 51000, 52000, 53000, 90000, 100000];
+                                    for (let i = 0; i < altThresholds.length; ++i) {
+                                        if (latLng.alt <= altThresholds[i]) {
+                                            return i;
+                                        }
+                                    }
+                                    return altThresholds.length;
+                                },
+                                options: [{color: '#0046a9'}, {color: '#004cad'}, {color: '#0054b3'},
+                                {color: '#005ebb'}, {color: '#0068c3'}, {color: '#0072cb'},
+                                {color: '#007ed5'}, {color: '#008bdd'}, {color: '#0097e6'},
+                                {color: '#00a1ed'}, {color: '#01adf3'}, {color: '#01b7f9'},
+                                {color: '#00befd'}, {color: '#00c9ff'}, {color: '#00cfff'},
+                                {color: '#00d5ff'}, {color: '#00d9fb'}, {color: '#00dbed'},
+                                {color: '#01dbe3'}, {color: '#00dbd9'}, {color: '#00dbcb'},
+                                {color: '#00dbc1'}, {color: '#00dbb3'}, {color: '#01dba5'},
+                                {color: '#00db99'}, {color: '#00db8b'}, {color: '#00db7e'},
+                                {color: '#01db72'}, {color: '#00db68'}, {color: '#00db5e'},
+                                {color: '#06db56'}, {color: '#11dd4e'}, {color: '#20df46'},
+                                {color: '#30df40'}, {color: '#42e138'}, {color: '#56e330'},
+                                {color: '#6ae32a'}, {color: '#81e524'}, {color: '#95e51e'},
+                                {color: '#a9e518'}, {color: '#bde512'}, {color: '#cfe50e'},
+                                {color: '#dfe50a'}, {color: '#eee506'}, {color: '#f9e502'},
+                                {color: '#ffe300'}, {color: '#ffe000'}, {color: '#ffdb01'},
+                                {color: '#ffd900'}, {color: '#ffd500'}, {color: '#ffd100'},
+                                {color: '#ffcb00'}, {color: '#ffc700'}, {color: '#ffc300'},
+                                {color: '#757b85'}]
+                            },
+                            weight: 5,
+                            lineCap: 'round',
+                            opacity: 1,
+                            smoothFactor: 1
+                        }).addTo(player[checkDumpCallsign(callsign)].polyline);
+                        let featureGroup = player[checkDumpCallsign(callsign)].polyline;
+                        // only stay last 100 features in this group
+                        featureGroup.eachLayer(function (layer) {
+                            if (featureGroup.getLayers().length > 5){
+                                featureGroup.removeLayer(layer);
+                            }
+                        });
+                    } else {
+                        let featureGroup = player[checkDumpCallsign(callsign)].polyline;
+                        featureGroup.eachLayer(function (layer) {
+                            featureGroup.removeLayer(layer);
+                        });
+                    }
+                    if (localStorage.getItem("pilot-plan") == "true") {
+                        let planPoints = [];
+                        for (let i = 0; i < plan.length; i++) {
+                            planPoints.push(L.latLng(plan[i][1], plan[i][2]));
+                        }
+                        // player[checkDumpCallsign(callsign)].planMarkerList.eachLayer(function (layer) {
+                        //     player[checkDumpCallsign(callsign)].planMarkerList.removeLayer(layer);
+                        // });
+                        // for (let i = 0; i < plan.length; i++) {
+                        //     L.marker(planPoints[i])
+                        //     .bindPopup(plan[i][0])
+                        //     .addTo(player[checkDumpCallsign(callsign)].planMarkerList);
+                        // }
+                        player[checkDumpCallsign(callsign)].plan.setLatLngs(planPoints);
+                    } else {
+                        player[checkDumpCallsign(callsign)].plan.setLatLngs([]);
+                    }
                 }
             }
         }
@@ -374,8 +439,12 @@ function addMark() {
                     checkShowRange() ? circle.addTo(map) : null;
                 }
                 // set pop up
-                circle.bindPopup(`<b>${d.callsign}</b>`);
-                marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                circle.bindPopup(`<b>${d.callsign}</b>`, {
+                    className: "popup"
+                });
+                marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`, {
+                    className: "popup"
+                });
                 $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
                 player[i].circle = circle;
@@ -420,7 +489,13 @@ function addMark() {
                 addPath(d.callsign);
                 checkShowPilot() ? marker.addTo(map) : null;
                 // set pop up
-                marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
+                    className: "popup"
+                });
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                if (detailDOM.length != 0) {
+                    detailDOM.html(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                }
                 $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
                 player[i].marker = marker;
             }
@@ -434,7 +509,9 @@ function addMark() {
                     !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
                     !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
                 }
-                d.marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`, {
+                    className: "popup"
+                });
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
@@ -467,7 +544,13 @@ function addMark() {
                 }
                 addPath(d.callsign);
                 player[i].marker.options.alt = d.callsign;
-                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
+                    className: "popup"
+                });
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                if (detailDOM.length != 0) {
+                    detailDOM.html(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                }
                 d.marker.options.rotationAngle = d.heading;
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
             }
