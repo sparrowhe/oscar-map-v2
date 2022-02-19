@@ -421,8 +421,8 @@ function addMark() {
                 // set icon to ATC and add marker
                 let icon = L.icon({
                     iconUrl: 'static/image/headset_mic.png',
-                    iconSize: [50, 50],
-                    iconAnchor: [25, 25],
+                    iconSize: [25, 25],
+                    iconAnchor: [12.5, 12.5],
                     popupAnchor: [0, -15]
                 });
                 let marker = L.marker([d.lat, d.lng], {
