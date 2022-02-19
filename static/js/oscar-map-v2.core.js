@@ -69,28 +69,36 @@ function init() {
     if (localStorage.getItem("pilot-track") == "false") {
         $("#pilot-track").prop("checked", false);
     }
-    if (localStorage.getItem("pilot-track") == "false") {
-        $("#pilot-track").prop("checked", false);
+    if (localStorage.getItem("pilot-plan") == "false") {
+        $("#pilot-plan").prop("checked", false);
     }
     map.on('popupopen', function(e) {
         let marker = e.popup._source;
         let callsign = marker.options.alt;
-        if (marker.options.alt != undefined) {
+        if (player[checkDumpCallsign(callsign)].type == "PILOT") {
             player[checkDumpCallsign(callsign)].polyline.addTo(map);
             player[checkDumpCallsign(callsign)].plan.addTo(map);
-            player[checkDumpCallsign(callsign)].planMarkerList.addTo(map);
         }
         let d = player[checkDumpCallsign(callsign)];
         let detailDOM = $(`#detail-body`);
-        detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}</div>`);
+        if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
+                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+                                                <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
+                                                <tr><td>高度：</td><td>${d.alt}</td></tr>
+                                                <tr><td>航向：</td><td>${d.heading}</td></tr>
+                                                <tr><td>航路：</td><td>${d.route}</td></tr>
+                                                <tr><td>飞行员：</td><td>${d.id}</td></tr>
+                                                <tr><td>机型：</td><td>${d.actype}</td></tr>
+                                                <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                </tbody></table></div>`);
+        else if (d.type == "ATC") detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}</div>`);
     });
     map.on('popupclose', function(e) {
         let marker = e.popup._source;
         let callsign = marker.options.alt;
-        if (marker.options.alt != undefined) {
+        if (player[checkDumpCallsign(callsign)].type == "PILOT") {
             map.removeLayer(player[checkDumpCallsign(callsign)].polyline);
             map.removeLayer(player[checkDumpCallsign(callsign)].plan);
-            map.removeLayer(player[checkDumpCallsign(callsign)].planMarkerList);
         }
         let detailDOM = $(`#detail-body`);
         detailDOM.html("<p>请先选中一个机组或管制员</p>");
@@ -307,7 +315,7 @@ function updMap() {
                 checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
                 checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.tooltip = player[checkDumpCallsign(d.callsign)].tooltip;
                 checkDumpCallsign(d.callsign) == -1 ? d.polyline = L.featureGroup() : d.polyline = player[checkDumpCallsign(d.callsign)].polyline;
-                checkDumpCallsign(d.callsign) == -1 ? d.plan = L.polyline([], { color: "grey", weight: 6 }) : d.plan = player[checkDumpCallsign(d.callsign)].plan;
+                checkDumpCallsign(d.callsign) == -1 ? d.plan = L.polyline([], { color: "grey", weight: 6, opacity: 0.5}) : d.plan = player[checkDumpCallsign(d.callsign)].plan;
                 checkDumpCallsign(d.callsign) == -1 ? d.planMarkerList = L.featureGroup() : d.planMarkerList = player[checkDumpCallsign(d.callsign)].planMarkerList;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
@@ -418,13 +426,15 @@ function addMark() {
                     popupAnchor: [0, -15]
                 });
                 let marker = L.marker([d.lat, d.lng], {
-                    icon: icon
+                    icon: icon,
+                    alt: d.callsign
                 });
                 let circle = L.circle([d.lat, d.lng], {
                     color: '#ff0000',
                     fillColor: '#ff0000',
                     fillOpacity: 0.3,
-                    radius: d.radarRange
+                    radius: d.radarRange,
+                    alt: d.callsign
                 })
                 if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
                     checkShowATC() ? marker.addTo(map) : null;
@@ -440,6 +450,10 @@ function addMark() {
                 marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`, {
                     className: "popup"
                 });
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                if (detailDOM.length != 0) {
+                    detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}</div>`);
+                }
                 $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
                 player[i].circle = circle;
@@ -489,7 +503,16 @@ function addMark() {
                 });
                 let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
                 if (detailDOM.length != 0) {
-                    detailDOM.html(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
+                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+                                                <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
+                                                <tr><td>高度：</td><td>${d.alt}</td></tr>
+                                                <tr><td>航向：</td><td>${d.heading}</td></tr>
+                                                <tr><td>航路：</td><td>${d.route}</td></tr>
+                                                <tr><td>飞行员：</td><td>${d.id}</td></tr>
+                                                <tr><td>机型：</td><td>${d.actype}</td></tr>
+                                                <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                </tbody></table></div>`);
                 }
                 $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
                 player[i].marker = marker;
@@ -507,6 +530,10 @@ function addMark() {
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`, {
                     className: "popup"
                 });
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                if (detailDOM.length != 0) {
+                    detailDOM.html(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`);
+                }
                 $(`#atc-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.freq}</td>`);
             } else if (d.type == "PILOT") {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
@@ -544,7 +571,16 @@ function addMark() {
                 });
                 let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
                 if (detailDOM.length != 0) {
-                    detailDOM.html(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`);
+                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
+                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+                                                <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
+                                                <tr><td>高度：</td><td>${d.alt}</td></tr>
+                                                <tr><td>航向：</td><td>${d.heading}</td></tr>
+                                                <tr><td>航路：</td><td>${d.route}</td></tr>
+                                                <tr><td>飞行员：</td><td>${d.id}</td></tr>
+                                                <tr><td>机型：</td><td>${d.actype}</td></tr>
+                                                <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                </tbody></table></div>`);    
                 }
                 d.marker.options.rotationAngle = d.heading;
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
