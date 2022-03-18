@@ -35,16 +35,16 @@ function init() {
             maxZoom: 18,
         }).addTo(map);
     } else if (localStorage.getItem("map") == "tianditu") {
-        map.options.crs = L.CRS.EPSG4326;
+        //map.options.crs = L.CRS.EPSG4326;
         map.setView([34, 110], 5);
         $.ajax({
             url: "static/config.json",
             dataType: "json",
             success: function (data) {
-                L.tileLayer(`https://t0.tianditu.gov.cn/img_c/wmts?layer=img&style=default&tilematrixset=c&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${data.token.tianditu}`, {
+                L.tileLayer(`https://t0.tianditu.gov.cn/img_w/wmts?layer=img&style=default&tilematrixset=w&Service=WMTS&Request=GetTile&Version=1.0.0&Format=tiles&TileMatrix={z}&TileCol={x}&TileRow={y}&tk=${data.token.tianditu}`, {
                     maxZoom: 18,
-                    zoomOffset: 1,
-                    tileSize: 256,
+                    //zoomOffset: 1,
+                    //tileSize: 256,
                     attribution: 'Map data © <a href="https://www.tianditu.gov.cn">天地图</a>, <a>鲁ICP备2021029425号</a>',
                 }).addTo(map);
                 
