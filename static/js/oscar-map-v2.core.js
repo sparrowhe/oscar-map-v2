@@ -8,6 +8,22 @@ function init() {
     console.log('%c版权所有：Sparrow He', 'color: black; font-size: 15px;');
     console.log('%c禁止一切侵权行为，购买使用授权请联系QQ：1441373096', 'color: black; font-size: 15px;');
     map = L.map('map').setView([34, 110], 5);
+    let atcB = L.tileLayer("https://tiles.flightradar24.com/atc_boundaries/{z}/{x}/{y}/tile.png", {
+        attribution: '<a href="https://www.flightradar24.com/">Flightradar24</a>',
+    });
+    let hRTE = L.tileLayer("https://tiles.flightradar24.com/navdata_ha/{z}/{x}/{y}/tile.png", {
+        attribution: '<a href="https://www.flightradar24.com/">Flightradar24</a>',
+    })
+    let lRTE = L.tileLayer("https://tiles.flightradar24.com/navdata_la/{z}/{x}/{y}/tile.png", {
+        attribution: '<a href="https://www.flightradar24.com/">Flightradar24</a>',
+    })
+    L.control.layers.tree({}, {
+        label: '附加图层',
+        children: [
+            { label: '管制边界', layer: atcB },
+            { label: '全球高空航路', layer: hRTE },
+            { label: '全球低空航路', layer: lRTE }
+        ]}).addTo(map);
     if (localStorage.getItem("map") == null || localStorage.getItem("map") == "osm") {
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: 'Map data © <a href="https://openstreetmap.org">OpenStreetMap</a>, <a>鲁ICP备2021029425号</a>',
