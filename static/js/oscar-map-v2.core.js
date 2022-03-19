@@ -548,9 +548,9 @@ function addMark() {
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
                     className: "popup"
                 });
-                let detailDOM = $(`#detail-body`);
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
                 if (detailDOM.length != 0) {
-                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
+                    if (d.type == "PILOT") detailDOM.html(`
                                                 <div class="detail-icon">
                                                 <img class="detail-img" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
                                                 </div>
@@ -563,7 +563,7 @@ function addMark() {
                                                 <tr><td>飞行员：</td><td>${d.id}</td></tr>
                                                 <tr><td>机型：</td><td>${d.actype}</td></tr>
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
-                                                </tbody></table></div>`);
+                                                </tbody></table>`);
                 }
                 $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
                 player[i].marker = marker;
@@ -622,9 +622,9 @@ function addMark() {
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
                     className: "popup"
                 });
-                let detailDOM = $(`#detail-body`);
+                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
                 if (detailDOM.length != 0) {
-                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
+                    if (d.type == "PILOT") detailDOM.html(`
                                                 <div class="detail-icon">
                                                 <img class="detail-img" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
                                                 </div>
@@ -637,7 +637,7 @@ function addMark() {
                                                 <tr><td>飞行员：</td><td>${d.id}</td></tr>
                                                 <tr><td>机型：</td><td>${d.actype}</td></tr>
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
-                                                </tbody></table></div>`);    
+                                                </tbody></table>`);    
                 }
                 d.marker.options.rotationAngle = d.heading;
                 $(`#pilot-body tr#${d.callsign}`).html(`<td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td>`);
