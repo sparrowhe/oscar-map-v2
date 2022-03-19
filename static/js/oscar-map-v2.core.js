@@ -307,6 +307,13 @@ function updMap() {
                     mdui.updateTables();
                 }
             }
+            for(let i = 0; i < n.length; i++) {
+                if(player[i].callsign == "") {
+                    player.splice(i, 1);
+                    i--;
+                    continue;
+                }
+            }
             for (let i = 0; i < n.length; i++) {
                 let t = n[i].split(":");
                 // console.log(t);
