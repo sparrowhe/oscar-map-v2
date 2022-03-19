@@ -34,6 +34,15 @@
     }
 }
 
+.tag-icon {
+    max-width: 50px;
+}
+
+.detail-icon {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
 .time {
     z-index: 114514;
     position: fixed;
