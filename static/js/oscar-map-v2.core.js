@@ -307,7 +307,7 @@ function updMap() {
                     mdui.updateTables();
                 }
             }
-            for(let i = 0; i < n.length; i++) {
+            for(let i = 0; i < player.length; i++) {
                 if(player[i].callsign == "") {
                     player.splice(i, 1);
                     i--;
