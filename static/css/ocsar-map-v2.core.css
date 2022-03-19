@@ -28,9 +28,12 @@
     visibility: hidden;
 }
 
-.popup {
-    display: none;
+@media (min-width: 1023.9px){
+    .popup {
+        display: none;
+    }
 }
+
 
 .time {
     z-index: 114514;
