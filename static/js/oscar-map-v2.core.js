@@ -360,7 +360,7 @@ function addPath() {
             for(let i = 0; i < data.length; i++) {
                 let d = data[i];
                 let callsign = d.callsign;
-                if (d.callsign == callsign && checkDumpCallsign(callsign)) {
+                if (d.callsign == callsign && checkDumpCallsign(callsign) != -1) {
                     let route = d.route;
                     let points = [];
                     let plan = d.route_f;
@@ -430,7 +430,8 @@ function addPath() {
                         //     .bindPopup(plan[i][0])
                         //     .addTo(player[checkDumpCallsign(callsign)].planMarkerList);
                         // }
-                        player[checkDumpCallsign(callsign)].plan.setLatLngs(planPoints);
+                        
+                        checkDumpCallsign(callsign) != -1 ? player[checkDumpCallsign(callsign)].plan.setLatLngs(planPoints) : null;
                     } else {
                         player[checkDumpCallsign(callsign)].plan.setLatLngs([]);
                     }
