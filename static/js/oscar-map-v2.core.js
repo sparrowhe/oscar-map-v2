@@ -73,6 +73,9 @@ function init() {
         $("#tianditu").prop("checked", true);
     }
     // load tag setting
+    if (localStorage.getItem("tag-icon") == "true") {
+        $("#tag-callsign").prop("checked", true);
+    }
     if (localStorage.getItem("tag-callsign") == "true") {
         $("#tag-callsign").prop("checked", true);
     }
@@ -100,8 +103,12 @@ function init() {
         }
         let d = player[checkDumpCallsign(callsign)];
         let detailDOM = $(`#detail-body`);
-        if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
-                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+        if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
+                                                <div class="detail-icon">
+                                                <img src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                </div>
+                                                <table class="mdui-table">
+                                                <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
                                                 <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
                                                 <tr><td>高度：</td><td>${d.alt}</td></tr>
                                                 <tr><td>航向：</td><td>${d.heading}</td></tr>
@@ -245,6 +252,12 @@ function savePilotSetting() {
 }
 
 function saveTagSetting() {
+    let icon = $("input[id='tag-icon']:checked");
+    if (icon.length == 0) {
+        localStorage.setItem("tag-icon", "false");
+    } else {
+        localStorage.setItem("tag-icon", "true");
+    }
     let callsign = $("input[id='tag-callsign']:checked");
     if (callsign.length == 0) {
         localStorage.setItem("tag-callsign", "false");
@@ -502,6 +515,9 @@ function addMark() {
                     alt: d.callsign
                 });
                 player[i].tooltip = "";
+                if (localStorage.getItem("tag-icon") == "true") {
+                    player[i].tooltip += `<img class="tag-icon" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
+                }
                 if (localStorage.getItem("tag-callsign") == "true"){
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
                 }
@@ -532,10 +548,14 @@ function addMark() {
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
                     className: "popup"
                 });
-                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                let detailDOM = $(`#detail-body`);
                 if (detailDOM.length != 0) {
-                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
-                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
+                                                <div class="detail-icon">
+                                                <img src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                </div>
+                                                <table class="mdui-table">
+                                                <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
                                                 <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
                                                 <tr><td>高度：</td><td>${d.alt}</td></tr>
                                                 <tr><td>航向：</td><td>${d.heading}</td></tr>
@@ -570,6 +590,9 @@ function addMark() {
                 !checkShowPilot() ? map.removeLayer(d.marker) : d.marker.addTo(map);
                 player[i].tooltip = "";
                 d.marker.closeTooltip();
+                if (localStorage.getItem("tag-icon") == "true") {
+                    player[i].tooltip += `<img class="tag-icon" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
+                }
                 if (localStorage.getItem("tag-callsign") == "true"){
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
                 }
@@ -599,10 +622,14 @@ function addMark() {
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
                     className: "popup"
                 });
-                let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
+                let detailDOM = $(`#detail-body`);
                 if (detailDOM.length != 0) {
-                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}><table class="mdui-table">
-                                                <thead><tr><th>项目</th><th>信息</th></tr></thead>
+                    if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
+                                                <div class="detail-icon">
+                                                <img src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                </div>
+                                                <table class="mdui-table">
+                                                <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
                                                 <tbody><tr><td>起飞/降落</td><td>${d.dep}/${d.arr}</td></tr>
                                                 <tr><td>高度：</td><td>${d.alt}</td></tr>
                                                 <tr><td>航向：</td><td>${d.heading}</td></tr>
