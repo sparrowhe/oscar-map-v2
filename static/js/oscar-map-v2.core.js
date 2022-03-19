@@ -1,9 +1,12 @@
 let map;
-mdui.mutation();
 let player = [];
 let openCallsign
+let inst = null;
 
 function init() {
+    mdui.mutation();
+    inst = new mdui.Tab("#tab");
+    inst.show(0);
     console.log('%cOscar Map', 'color: black; font-size: 24px; font-weight: bold;');
     console.log('%c版权所有：Sparrow He', 'color: black; font-size: 15px;');
     console.log('%c禁止一切侵权行为，购买使用授权请联系QQ：1441373096', 'color: black; font-size: 15px;');
@@ -108,6 +111,7 @@ function init() {
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
                                                 </tbody></table></div>`);
         else if (d.type == "ATC") detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}</div>`);
+        inst.show(2);
     });
     map.on('popupclose', function(e) {
         let marker = e.popup._source;
@@ -118,6 +122,7 @@ function init() {
         }
         let detailDOM = $(`#detail-body`);
         detailDOM.html("<p>请先选中一个机组或管制员</p>");
+        inst.show(0);
     });
     updMap();
     setInterval(updMap, 5000);
