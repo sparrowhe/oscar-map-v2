@@ -116,9 +116,11 @@ function init() {
     map.on('popupclose', function(e) {
         let marker = e.popup._source;
         let callsign = marker.options.alt;
-        if (player[checkDumpCallsign(callsign)].type == "PILOT") {
-            map.removeLayer(player[checkDumpCallsign(callsign)].polyline);
-            map.removeLayer(player[checkDumpCallsign(callsign)].plan);
+        if (checkDumpCallsign(callsign) != -1) {
+            if (player[checkDumpCallsign(callsign)].type == "PILOT") {
+                map.removeLayer(player[checkDumpCallsign(callsign)].polyline);
+                map.removeLayer(player[checkDumpCallsign(callsign)].plan);
+            }
         }
         let detailDOM = $(`#detail-body`);
         detailDOM.html("<p>请先选中一个机组或管制员</p>");
