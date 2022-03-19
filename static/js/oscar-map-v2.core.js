@@ -346,12 +346,13 @@ function updMap() {
     })
 }
 
-function addPath(callsign) {
+function addPath() {
     $.ajax({
         url: "https://fly.xnatc.ink/fly/json",
         success: function (data) {
             for(let i = 0; i < data.length; i++) {
                 let d = data[i];
+                let callsign = d.callsign;
                 if (d.callsign == callsign) {
                     let route = d.route;
                     let points = [];
@@ -516,7 +517,6 @@ function addMark() {
                         opacity: 0.8
                     }).openTooltip();
                 }
-                addPath(d.callsign);
                 checkShowPilot() ? marker.addTo(map) : null;
                 // set pop up
                 marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
@@ -585,7 +585,6 @@ function addMark() {
                         opacity: 0.8
                     }).openTooltip();
                 }
-                addPath(d.callsign);
                 player[i].marker.options.alt = d.callsign;
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
                     className: "popup"
@@ -608,5 +607,6 @@ function addMark() {
             }
         }
     }
+    addPath();
     mdui.updateTables();
 }
