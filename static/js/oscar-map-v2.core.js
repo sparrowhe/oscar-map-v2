@@ -438,7 +438,7 @@ function addMark() {
         // console.log(d);
         // console.log(d.marker);
         if (d.marker == null) {
-            if (d.type == "ATC") {
+            if (d.type == "ATC" && d.lat && d.lng) {
                 // set icon to ATC and add marker
                 let icon = L.icon({
                     iconUrl: 'static/image/headset_mic.png',
@@ -478,7 +478,7 @@ function addMark() {
                 $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
                 player[i].circle = circle;
-            } else if (d.type == "PILOT") {
+            } else if (d.type == "PILOT" && d.lat && d.lng) {
                 let icon = L.icon({
                     iconUrl: 'static/image/airplane.png',
                     iconSize: [50, 50],
@@ -539,7 +539,7 @@ function addMark() {
                 player[i].marker = marker;
             }
         } else {
-            d.marker.setLatLng([d.lat, d.lng]);
+            if (d.lat && d.lng) d.marker.setLatLng([d.lat, d.lng]);
             if (d.type == "ATC") {
                 if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
                     !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
