@@ -296,7 +296,7 @@ function updMap() {
                         break;
                     }
                 }
-                if (!flag) {
+                if (!flag && d.callsign != "") {
                     if (d.marker != null) map.removeLayer(d.marker);
                     if (d.circle != null) map.removeLayer(d.circle);
                     if (d.polyline != undefined || d.polyline != null) map.removeLayer(d.polyline);
@@ -353,7 +353,7 @@ function addPath() {
             for(let i = 0; i < data.length; i++) {
                 let d = data[i];
                 let callsign = d.callsign;
-                if (d.callsign == callsign) {
+                if (d.callsign == callsign && checkDumpCallsign(callsign)) {
                     let route = d.route;
                     let points = [];
                     let plan = d.route_f;
