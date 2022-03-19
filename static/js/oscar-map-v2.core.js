@@ -105,7 +105,7 @@ function init() {
         let detailDOM = $(`#detail-body`);
         if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
                                                 <div class="detail-icon">
-                                                <img class="detail-img" onerror=src="static/image/airlines/XNA.png" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                <img class="detail-img" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
                                                 </div>
                                                 <table class="mdui-table">
                                                 <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
@@ -516,7 +516,7 @@ function addMark() {
                 });
                 player[i].tooltip = "";
                 if (localStorage.getItem("tag-icon") == "true") {
-                    player[i].tooltip += `<img class="tag-icon" onerror=src="static/image/airlines/XNA.png" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
+                    player[i].tooltip += `<img class="tag-icon" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
                 }
                 if (localStorage.getItem("tag-callsign") == "true"){
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
@@ -552,7 +552,7 @@ function addMark() {
                 if (detailDOM.length != 0) {
                     if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
                                                 <div class="detail-icon">
-                                                <img class="detail-img" onerror=src="static/image/airlines/XNA.png" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                <img class="detail-img" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
                                                 </div>
                                                 <table class="mdui-table">
                                                 <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
@@ -591,7 +591,7 @@ function addMark() {
                 player[i].tooltip = "";
                 d.marker.closeTooltip();
                 if (localStorage.getItem("tag-icon") == "true") {
-                    player[i].tooltip += `<img class="tag-icon" onerror=src="static/image/airlines/XNA.png" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
+                    player[i].tooltip += `<img class="tag-icon" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png"></img><br>`;
                 }
                 if (localStorage.getItem("tag-callsign") == "true"){
                     player[i].tooltip += `<b>${d.callsign}</b><br>`;
@@ -626,7 +626,7 @@ function addMark() {
                 if (detailDOM.length != 0) {
                     if (d.type == "PILOT") detailDOM.html(`<div id=${d.callsign}>
                                                 <div class="detail-icon">
-                                                <img class="detail-img" onerror=src="static/image/airlines/XNA.png" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
+                                                <img class="detail-img" onerror=src="" src="static/image/airlines/${d.callsign.substring(0,3)}.png" />
                                                 </div>
                                                 <table class="mdui-table">
                                                 <thead><tr><th style="width: 35%">项目</th><th>信息</th></tr></thead>
