@@ -303,7 +303,7 @@ function updMap() {
             if (n[0] == "::::::::0::::0:XNATC::" && player.length == 0) return;
             for (let i = 0; i < n.length; i++) {
                 let d = n[i].split(":");
-                if (d[0] != "ATC" || d[0] != "PILOT") {
+                if (d[0] != "ATC" && d[0] != "PILOT") {
                     n.splice(i, 1);
                     i--;
                 }
