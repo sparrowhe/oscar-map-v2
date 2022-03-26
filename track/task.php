@@ -1,5 +1,6 @@
-//这是针对oscar-map-v2的航迹定时任务文件
+
 <?php
+//这是针对oscar-map-v2的航迹定时任务文件
 $shuzudcount = array();
 function db_connect_xnatc()
 {
