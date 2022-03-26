@@ -71,14 +71,17 @@ while (true) {
             //写入用户的经纬度数据
             $conn = db_connect_xnatc();
             echo "添加航班：" . $ki[2] . " \n";
-            $sql3 = "INSERT INTO `xnatc`.`flight_route` (`id`, `flight`, `flightid`, `lat`, `lng`, `data`, `dep`, `arr`, `route`) VALUES (NULL, '" . $ki[2] . "', '" . $ki[6] . "', '" . $ki[4] . "',  '" . $ki[5] . "', now(),'" . $ki[9] . "','" . $ki[10] . "','" . $ki[11] . "');";
+           
+            $sql3 = "INSERT INTO `flight_route` (`id`, `flight`, `flightid`, `lat`, `lng`, `data`, `dep`, `arr`, `route`) VALUES (NULL, '" . $ki[2] . "', '" . $ki[6] . "', '" . $ki[4] . "',  '" . $ki[5] . "', now(),'" . $ki[9] . "','" . $ki[10] . "','" . $ki[11] . "');";
             //echo $sql3;
             $result = $conn->query($sql3);
             mysqli_close($conn);
+            
+            
             $conn_track = db_connect_flight_track();
             //6速度
             //7航向
-            $sql3_t = "INSERT INTO `xnatc_b`.`flight_route` (`id`, `flight`, `flightid`, `lat`, `lng`, `data`, `dep`, `arr`, `route`, `callsign`, `speed`, `heading`) VALUES (NULL, '" . $ki[2] . "', '" . $ki[6] . "', '" . $ki[4] . "',  '" . $ki[5] . "', now(),'" . $ki[9] . "','" . $ki[10] . "','" . $ki[11] . "','" . $ki[1] . "','" . $ki[7] . "','" . $ki[8] . "');";
+            $sql3_t = "INSERT INTO `flight_route` (`id`, `flight`, `flightid`, `lat`, `lng`, `data`, `dep`, `arr`, `route`, `callsign`, `speed`, `heading`) VALUES (NULL, '" . $ki[2] . "', '" . $ki[6] . "', '" . $ki[4] . "',  '" . $ki[5] . "', now(),'" . $ki[9] . "','" . $ki[10] . "','" . $ki[11] . "','" . $ki[1] . "','" . $ki[7] . "','" . $ki[8] . "');";
             $result_track = $conn_track->query($sql3_t);
             mysqli_close($conn_track);
         }
@@ -124,7 +127,8 @@ while (true) {
             //echo $sql3;
             $result = $conn->query($sql4);
             mysqli_close($conn);
-            //UPDATE `xnatc_b`.`flight_route` SET `flight` = NULL, `flightid` = NULL, `lat` = NULL, `lng` = NULL, `data` = NULL, `dep` = NULL, `arr` = NULL, `route` = NULL WHERE `id` IS NULL;
+            //UPDATE `flight_route` SET `flight` = NULL, `flightid` = NULL, `lat` = NULL, `lng` = NULL, `data` = NULL, `dep` = NULL, `arr` = NULL, `route` = NULL WHERE `id` IS NULL;
+            
             $conn_track = db_connect_flight_track();
             $timenow = time();
             $timenow = (int)$timenow;
