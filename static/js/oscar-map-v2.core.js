@@ -344,7 +344,7 @@ function updMap() {
                 d.type = t[0];
                 d.id = t[1];
                 d.callsign = t[2];
-                d.freq = parseFloat(t[3]);
+                d.freq = parseFloat(t[3]).toFixed(3);
                 d.lat = parseFloat(t[4]);
                 d.lng = parseFloat(t[5]);
                 d.alt = parseFloat(t[6]);
