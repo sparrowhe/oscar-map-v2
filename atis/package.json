@@ -1,0 +1,13 @@
+{
+  "name": "ATISBot",
+  "version": "1.0.0",
+  "description": "ATIS Bot for Oscar Map v2",
+  "main": "main.js",
+  "author": "SparrowHe",
+  "license": "Phosphorus",
+  "private": false,
+  "dependencies": {
+    "axios": "^0.26.1",
+    "express": "^4.17.3"
+  }
+}

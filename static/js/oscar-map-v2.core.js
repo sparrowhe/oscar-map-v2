@@ -367,6 +367,7 @@ function updMap() {
                 checkDumpCallsign(d.callsign) == -1 ? d.polyline = L.featureGroup() : d.polyline = player[checkDumpCallsign(d.callsign)].polyline;
                 checkDumpCallsign(d.callsign) == -1 ? d.plan = L.polyline([], { color: "grey", weight: 6, opacity: 0.5}) : d.plan = player[checkDumpCallsign(d.callsign)].plan;
                 checkDumpCallsign(d.callsign) == -1 ? d.planMarkerList = L.featureGroup() : d.planMarkerList = player[checkDumpCallsign(d.callsign)].planMarkerList;
+                checkDumpCallsign(d.callsign) == -1 ? d.atcinfo = "" : d.atcinfo = player[checkDumpCallsign(d.callsign)].atcinfo;
                 checkDumpCallsign(d.callsign) == -1 ? player.push(d) : player[checkDumpCallsign(d.callsign)] = d;
                 // console.log(d);
             }

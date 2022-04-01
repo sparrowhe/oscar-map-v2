@@ -7,7 +7,7 @@ function getSubstr($str, $leftStr, $rightStr) {
     return substr($str, $left + strlen($leftStr), $right-$left-strlen($leftStr)); 
 }
 function fsd(){
-    $fsd = file_get_contents("https://www.xnatc.ink/whazzup.txt");
+    $fsd = file_get_contents("http://www.sparrowhe.top/whazzup.txt");
     $str = getSubstr($fsd,"!CLIENTS","!SERVERS");
     $str = trim($str);
     $data = explode("\n",$str);
