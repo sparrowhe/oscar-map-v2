@@ -116,6 +116,7 @@ function init() {
                                                 <tr><td>飞行员：</td><td>${d.id}</td></tr>
                                                 <tr><td>机型：</td><td>${d.actype}</td></tr>
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                <tr><td>来源：</td><td>${d.from}</td></tr>
                                                 </tbody></table></div>`);
         else if (d.type == "ATC") detailDOM.html(`<div id=${d.callsign}><b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}</div>`);
         inst.show(2);
@@ -153,8 +154,8 @@ function searchCallsignInPlayerAndSelect() {
     }
 }
 
-function milesToMetar(miles) {
-    return miles * 1.609344;
+function convertRange(meter) {
+    return parseInt(meter, 10);
 }
 
 function setUTCTime() {
@@ -353,8 +354,8 @@ function updMap() {
                 d.dep = t[9];
                 d.arr = t[10];
                 d.route = t[11];
-                d.radarRange = milesToMetar(parseFloat(t[12]));
-                d.form = t[13];
+                d.radarRange = convertRange(parseFloat(t[12]));
+                d.from = t[13];
                 d.squawk = t[14];
                 d.actype = t[15];
                 d.circle = null;
@@ -511,12 +512,22 @@ function addMark() {
                 player[i].marker = marker;
                 player[i].circle = circle;
             } else if (d.type == "PILOT" && d.lat && d.lng) {
-                let icon = L.icon({
-                    iconUrl: 'static/image/airplane.png',
-                    iconSize: [50, 50],
-                    iconAnchor: [25, 25],
-                    popupAnchor: [0, -15]
-                });
+                let icon;
+                if(d.from == "XNATC") {
+                    icon = L.icon({
+                        iconUrl: 'static/image/airplane.png',
+                        iconSize: [50, 50],
+                        iconAnchor: [25, 25],
+                        popupAnchor: [0, -15]
+                    });
+                } else {
+                    icon = L.icon({
+                        iconUrl: 'static/image/airplane_va.png',
+                        iconSize: [50, 50],
+                        iconAnchor: [25, 25],
+                        popupAnchor: [0, -15]
+                    });
+                }
                 let marker = L.marker([d.lat, d.lng], {
                     icon: icon,
                     rotationAngle: d.heading,
@@ -571,6 +582,7 @@ function addMark() {
                                                 <tr><td>飞行员：</td><td>${d.id}</td></tr>
                                                 <tr><td>机型：</td><td>${d.actype}</td></tr>
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                <tr><td>来源：</td><td>${d.from}</td></tr>
                                                 </tbody></table>`);
                 }
                 $("#pilot-body").html($("#pilot-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.dep}</td><td>${d.arr}</td></tr>`)
@@ -627,7 +639,7 @@ function addMark() {
                     }).openTooltip();
                 }
                 player[i].marker.options.alt = d.callsign;
-                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}`, {
+                player[i].marker.bindPopup(`<b>${d.callsign}</b><br>起飞/降落：${d.dep}/${d.arr}<br>高度：${d.alt}<br>航向：${d.heading}<br>航路：${d.route}<br>飞行员：${d.id}<br>机型：${d.actype}<br>应答机：${d.squawk}<br>来源：${d.from}`, {
                     className: "popup"
                 });
                 let detailDOM = $(`#detail-body div[id=${d.callsign}]`);
@@ -645,6 +657,7 @@ function addMark() {
                                                 <tr><td>飞行员：</td><td>${d.id}</td></tr>
                                                 <tr><td>机型：</td><td>${d.actype}</td></tr>
                                                 <tr><td>应答机：</td><td>${d.squawk}</td></tr>
+                                                <tr><td>来源：</td><td>${d.from}</td></tr>
                                                 </tbody></table>`);    
                 }
                 d.marker.options.rotationAngle = d.heading;
