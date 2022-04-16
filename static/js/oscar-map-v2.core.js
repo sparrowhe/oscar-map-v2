@@ -355,10 +355,10 @@ function updMap() {
                 d.arr = t[10];
                 d.route = t[11];
                 d.radarRange = convertRange(parseFloat(t[12]));
-                if (d.id.startsWith("F") || d.id.startsWith("A") || d.id.startsWith("S")) {
-                    d.from == "FSCenter";
-                }
                 d.from = t[13];
+                if (d.id.startsWith("F") || d.id.startsWith("A") || d.id.startsWith("S")) {
+                    d.from = "FSCenter";
+                }
                 d.squawk = t[14];
                 d.actype = t[15];
                 d.circle = null;
