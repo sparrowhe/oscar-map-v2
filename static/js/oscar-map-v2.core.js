@@ -359,7 +359,7 @@ function updMap() {
                     d.from == "FSCenter";
                 }
                 d.from = t[13];
-                d.squawk = t[14];
+                d.squawk = t[14].padStart(4,0);
                 d.actype = t[15];
                 d.circle = null;
                 d.marker = null;
