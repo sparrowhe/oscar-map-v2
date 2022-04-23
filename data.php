@@ -18,8 +18,20 @@ function fsd(){
         $heading = round($heading); 
         $radar_radius = 1852 * $arr[19] / 2 ;   
         if (isset($arr[3])){
-        echo $arr[3].":".$arr[1].":".$arr[0].":".$arr[4].":".$arr[5].":".$arr[6].":".$arr[7].":".$arr[8].":".$heading.":".$arr[11].":".$arr[13].":".$arr[30].":".$radar_radius.":XNATC:".$arr[17].":".$arr[9];
-        echo "\n";}
+            $s=$arr[17]; 
+            $n=strlen($s);
+           if($n==3){
+                $s="0".$s;
+           }elseif ($n==2) {
+                $s="00".$s;
+           }elseif ($n==1) {
+                $s="000".$s;
+           }elseif ($n==0) {
+                $s="0000";
+           }
+            echo $arr[3].":".$arr[1].":".$arr[0].":".$arr[4].":".$arr[5].":".$arr[6].":".$arr[7].":".$arr[8].":".$heading.":".$arr[11].":".$arr[13].":".$arr[30].":".$radar_radius.":XNATC:".$s.":".$arr[9];
+            echo "\n";
+        }
     }
 }
 function fsd1(){
