@@ -355,8 +355,9 @@ function updMap() {
                 d.arr = t[10];
                 d.route = t[11];
                 d.radarRange = convertRange(parseFloat(t[12]));
+                d.from = t[13];
                 if (d.id.startsWith("F") || d.id.startsWith("A") || d.id.startsWith("S")) {
-                    d.from == "FSCenter";
+                    d.from = "FSCenter";
                 }
                 d.from = t[13];
                 d.squawk = t[14].padStart(4,0);
