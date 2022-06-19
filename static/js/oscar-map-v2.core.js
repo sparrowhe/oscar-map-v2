@@ -3,6 +3,10 @@ let player = [];
 let openCallsign
 let inst = null;
 
+let FIRs=[];
+let UIRs=[];
+let Geos=[];
+
 function init() {
     mdui.mutation();
     inst = new mdui.Tab("#tab");
@@ -134,6 +138,7 @@ function init() {
         detailDOM.html("<p>请先选中一个机组或管制员</p>");
         inst.show(0);
     });
+    LoadSectorData();
     updMap();
     setInterval(updMap, 5000);
     setUTCTime();
@@ -322,6 +327,7 @@ function updMap() {
                 if (!flag && d.callsign != "") {
                     if (d.marker != null) map.removeLayer(d.marker);
                     if (d.circle != null) map.removeLayer(d.circle);
+                    if (d.realRange != null) map.removeLayer(d.realRange);
                     if (d.polyline != undefined || d.polyline != null) map.removeLayer(d.polyline);
                     if (d.plan != undefined || d.plan != null) map.removeLayer(d.plan);
                     $(`#${d.type.toLowerCase()}-body tr#${d.callsign}`).remove();
@@ -364,10 +370,12 @@ function updMap() {
                 d.actype = t[15];
                 d.circle = null;
                 d.marker = null;
+                d.realRange = null;
                 if (d.lat == NaN || d.lng == NaN) continue;
                 if (d.callsign == NaN) continue;
                 checkDumpCallsign(d.callsign) == -1 ? d.marker = null : d.marker = player[checkDumpCallsign(d.callsign)].marker;
                 checkDumpCallsign(d.callsign) == -1 ? d.circle = null : d.circle = player[checkDumpCallsign(d.callsign)].circle;
+                checkDumpCallsign(d.callsign) == -1 ? d.realRange = null : d.realRange = player[checkDumpCallsign(d.callsign)].realRange;
                 checkDumpCallsign(d.callsign) == -1 ? d.tooltip = null : d.tooltip = player[checkDumpCallsign(d.callsign)].tooltip;
                 checkDumpCallsign(d.callsign) == -1 ? d.polyline = L.featureGroup() : d.polyline = player[checkDumpCallsign(d.callsign)].polyline;
                 checkDumpCallsign(d.callsign) == -1 ? d.plan = L.polyline([], { color: "grey", weight: 6, opacity: 0.5}) : d.plan = player[checkDumpCallsign(d.callsign)].plan;
@@ -494,12 +502,67 @@ function addMark() {
                     radius: d.radarRange,
                     alt: d.callsign
                 })
+                let realRange = null;
+                if (d.callsign.indexOf("CTR") != -1) {
+                    let id=d.callsign.split("_")[0];
+                    // find id in FIRs
+                    for (let j = 0; j < FIRs.length; j++) {
+                        if (FIRs[j].prefix == id) {
+                            let range = Geos[FIRs[j].boundary].coordinates[0][0];
+                            for (let k = 0; k < range.length; k++) {
+                                let temp = range[k][0];
+                                range[k][0] = range[k][1];
+                                range[k][1] = temp;
+                            }
+                            realRange = L.polygon(range, {color: 'blue'});
+                        }
+                    }
+                }
+                if (d.callsign.indexOf("FSS") != -1) {
+                    let id=d.callsign.split("_")[0];
+                    // find id in UIRs
+                    for (let j = 0; j < UIRs.length; j++) {
+                        if (UIRs[j].prefix == id) {
+                            let covered = UIRs[j].cover.split(",");
+                            let range = [];
+                            let br = [];
+                            for (let k = 0; k < covered.length; k++) {
+                                range.push(Geos[covered[k]].coordinates);
+                            }
+                            for (let k = 0; k < range.length; k++) {
+                                let temp = range[k];
+                                for (let l = 0; l < temp.length; l++) {
+                                    let temp2 = temp[l];
+                                    for(let m = 0; m < temp2.length; m++) {
+                                        let temp3 = temp2[m];
+                                        for (let n = 0; n < temp3.length; n++) {
+                                            let temp4 = temp3[n];
+                                            let temp5 = temp4[0];
+                                            temp4[0] = temp4[1];
+                                            temp4[1] = temp5;
+                                            temp3[n]=temp4;
+                                        }
+                                        temp2[m] = temp3;
+                                    }
+                                    temp[l] = temp2;
+                                }
+                                range[k] = temp;
+                            }
+                            for(let k = 0; k < range.length; k++) {
+                                br.push([range[k][0][0]]);
+                            }
+                            realRange = L.polygon(br, {color: 'blue'});
+                        }
+                    }
+                }
                 if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
                     checkShowATC() ? marker.addTo(map) : null;
-                    checkShowRange() ? circle.addTo(map) : null;
+                    checkShowRange()&&realRange==null ? circle.addTo(map) : null;
+                    checkShowRange()&&realRange!=null ? realRange.addTo(map) : null;
                 } else {
                     checkShowObs() ? marker.addTo(map) : null;
-                    checkShowRange() ? circle.addTo(map) : null;
+                    checkShowRange()&&realRange==null ? circle.addTo(map) : null;
+                    checkShowRange()&&realRange!=null ? realRange.addTo(map) : null;
                 }
                 // set pop up
                 circle.bindPopup(`<b>${d.callsign}</b>`, {
@@ -515,6 +578,7 @@ function addMark() {
                 $("#atc-body").html($("#atc-body").html() +`<tr id=${d.callsign} onclick="clickPlayerInList(this)"><td>${d.callsign}</td><td>${d.freq}</td></tr>`)
                 player[i].marker = marker;
                 player[i].circle = circle;
+                player[i].realRange = realRange;
             } else if (d.type == "PILOT" && d.lat && d.lng) {
                 let icon;
                 if(d.from == "XNATC" || d.from == "FSCenter") {
@@ -597,10 +661,10 @@ function addMark() {
             if (d.type == "ATC") {
                 if (d.callsign.indexOf("OBS") == -1 && d.callsign.indexOf("SUP") == -1) {
                     !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
-                    !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
+                    !checkShowRange()||d.realRange!=null ? map.removeLayer(d.circle) : d.circle.addTo(map);
                 } else {
                     !checkShowATC() ? map.removeLayer(d.marker) : d.marker.addTo(map);
-                    !checkShowRange() ? map.removeLayer(d.circle) : d.circle.addTo(map);
+                    !checkShowRange()||d.realRange!=null ? map.removeLayer(d.circle) : d.circle.addTo(map);
                 }
                 player[i].marker.bindPopup(`<b>${d.callsign}</b><br>频率：${d.freq}<br>管制员：${d.id}`, {
                     className: "popup"
@@ -671,4 +735,61 @@ function addMark() {
     }
     addPath();
     mdui.updateTables();
+}
+
+function LoadSectorData() {
+    $.ajax({
+        url: "static/data/data.dat",
+        type: "GET",
+        dataType: "text",
+        success: function(data) {
+            let lines = data.split("\n");
+            console.log(lines);
+            let temp_sector = "";
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                if (line == "[FIRs]") {
+                    temp_sector = "FIR";
+                    continue;
+                } else if (line == "[UIRs]") {
+                    temp_sector = "UIR";
+                    continue;
+                } else if (line.startsWith(";")) {
+                    continue;
+                }
+                if (line != "") {
+                    if (temp_sector == "FIR") {
+                        let sector = {};
+                        sector.icao = line.split("|")[0];
+                        sector.name = line.split("|")[1];
+                        sector.prefix = line.split("|")[2];
+                        sector.boundary = line.split("|")[3];
+                        FIRs.push(sector);
+                    } else if (temp_sector == "UIR") {
+                        let sector = {};
+                        sector.prefix = line.split("|")[0];
+                        sector.name = line.split("|")[1];
+                        sector.cover = line.split("|")[2];
+                        UIRs.push(sector);
+                    }
+                }
+            }
+        }
+    })
+    $.ajax({
+        url: "static/data/sectors.geojson",
+        type: "GET",
+        dataType: "json",
+        success: function(data) {
+            for (let i = 0; i < data.features.length; i++) {
+                let feature = data.features[i];
+                let geo = {}
+                geo.label_lon=feature.properties.label_lon;
+                geo.label_lat=feature.properties.label_lat;
+                geo.id=feature.properties.id;
+                geo.coordinates=feature.geometry.coordinates;
+                Geos[feature.properties.id] = geo;
+            }
+        }
+    })
 }
