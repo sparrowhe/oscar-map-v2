@@ -302,7 +302,7 @@ function clickSettingSave() {
 
 function updMap() {
     $.ajax({
-        url: "https://map.xnatc.ink/data.php",
+        url: "https://map.xnatc.com/data.php",
         success: function (data) {
             let n = data.split("\n");
             n.pop();
@@ -391,7 +391,7 @@ function updMap() {
 
 function addPath() {
     $.ajax({
-        url: "https://fly.xnatc.ink/fly/json",
+        url: "https://fly.xnatc.com/fly/json",
         success: function (data) {
             for(let i = 0; i < data.length; i++) {
                 let d = data[i];
