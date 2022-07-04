@@ -507,7 +507,7 @@ function addMark() {
                     let id=d.callsign.split("_")[0];
                     // find id in FIRs
                     for (let j = 0; j < FIRs.length; j++) {
-                        if (FIRs[j].prefix == id) {
+                        if (FIRs[j].prefix == id || (FIRs[j].prefix == "" && FIRs[j].icao == id)) {
                             let range = Geos[FIRs[j].boundary].coordinates[0][0];
                             for (let k = 0; k < range.length; k++) {
                                 let temp = range[k][0];
