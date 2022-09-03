@@ -1,4 +1,6 @@
 # Oscar Map V2
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsparrowhe%2Foscar-map-v2.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsparrowhe%2Foscar-map-v2?ref=badge_shield)
+
 
 一个连飞地图。
 
@@ -26,3 +28,6 @@ sprintf(dataseg7,"::::::%s:%s", sprintgmt(tempclient->starttime,s), tempclient->
 ## 摸鱼检测
 
 `make cloc`
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsparrowhe%2Foscar-map-v2.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsparrowhe%2Foscar-map-v2?ref=badge_large)
